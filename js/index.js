@@ -27,13 +27,25 @@ function renderControlItem(_, index) {
     return _;
 }
 
-function renderSlide(url, index) {
+function renderSlide(url, index, _) {
     const slide = document.createElement('div');
-
+    const isString = typeof url === "string";
     slide.classList.add('slider__item');
-    sliderContainer.append(slide);
-    slide.setAttribute('style', `background-image: url(${url});`);
     slide.setAttribute('index', index);
+
+    if (isString) {
+        slide.setAttribute('style', `background-image: url(${url});`);
+    } else {
+        url.map(itemUrl => {
+            const child = document.createElement('div');
+            child.classList.add('slider__item-child');
+            child.setAttribute('style', `background-image: url(${itemUrl});`);
+            slide.append(child);
+        })
+    }
+
+    sliderContainer.append(slide);
+
     return slide
 }
 

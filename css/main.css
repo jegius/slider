@@ -43,4 +43,10 @@
 .slider__item {
     min-height: 100%;
     background-position: center;
+    display: flex;
+}
+.slider__item-child {
+    min-height: 100%;
+    flex-grow: 1;
+    background-position: center;
 }

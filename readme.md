@@ -92,15 +92,93 @@ function renderControlItem(_, index) {
 ```
 
 7. Создается функция `renderSlide`, которая создает слайд с изображением по URL:
+## Описание функции
+
+Функция `renderSlide` принимает в качестве аргументов `url`, `index` и `_`.
 
 ```JavaScript
-function renderSlide(url, index) {
-  const slide = document.createElement('div');
-  slide.classList.add('slider__item');
-  sliderContainer.append(slide);
-  slide.setAttribute('style', `background-image: url(${url});`);
-  slide.setAttribute('index', index);
-  return slide
+function renderSlide(url, index, _) {
+    ...
+}
+```
+
+`url` - это URL-адрес изображения (строка) или нескольких изображений (массив) для слайда.
+
+`index` - это индекс слайда, который потребуется для управления слайдом.
+
+Аргумент `_` принимается функцией, но не используется в её теле. Вероятно, он нужен для совместимости с некоторыми методами массивов, в которых требуется третьим аргументом функции-коллбека обозначать сам исходный массив.
+
+Внутри функции происходит создание HTML элемента `div`, которому присваивается класс `'slider__item'` и атрибут `'index'` c значением индекса слайда.
+
+```JavaScript
+const slide = document.createElement('div');
+slide.classList.add('slider__item');
+slide.setAttribute('index', index);
+```
+
+Затем осуществляется проверка типа аргумента `url`: если это строка, то это URL-адрес одного изображения, и его можно установить в качестве фона для слайда. Если это массив, то это несколько URL-адресов изображений, и каждое из них устанавливается в качестве фона своего дочернего элемента слайда.
+
+```JavaScript
+const isString = typeof url === "string";
+
+if (isString) {
+    slide.setAttribute('style', `background-image: url(${url});`);
+} else {
+    url.map(itemUrl => {
+        const child = document.createElement('div');
+        child.classList.add('slider__item-child');
+        child.setAttribute('style', `background-image: url(${itemUrl});`);
+        slide.append(child);
+    });
+}
+```
+
+В конце функции слайд добавляется в контейнер слайдера, и сам слайд возвращается как результат функции. Слайдер контейнер должен быть определен за пределами функции.
+
+```JavaScript
+sliderContainer.append(slide);
+return slide;
+```
+
+## Как использовать функцию
+
+Функцию можно использовать для создания слайдов в слайдере следующим образом:
+
+```JavaScript
+const imageUrls = [
+    "path/to/your/image1.jpg",
+    ["path/to/your/image2_1.jpg", "path/to/your/image2_2.jpg"],
+    "path/to/your/image3.jpg",
+    //...
+]
+
+imageUrls.map(renderSlide);
+```
+
+В результатае получится слайдер с индивидуальными изображениями на слайдах и несколькими изображениями на одном слайде.
+
+
+```JavaScript
+function renderSlide(url, index, _) {
+    const slide = document.createElement('div');
+    const isString = typeof url === "string";
+    slide.classList.add('slider__item');
+    slide.setAttribute('index', index);
+
+    if (isString) {
+        slide.setAttribute('style', background-image: url(${url}););
+    } else {
+        url.map(itemUrl => {
+            const child = document.createElement('div');
+            child.classList.add('slider__item-child');
+            child.setAttribute('style', background-image: url(${itemUrl}););
+            slide.append(child);
+        })
+    }
+
+    sliderContainer.append(slide);
+
+    return slide
 }
 ```
 
